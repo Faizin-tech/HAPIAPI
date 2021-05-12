@@ -2,22 +2,7 @@ const { nanoid } = require('nanoid')
 const books = require('./books')
 
 const addBook = (req, res) => {
-  if (!req.payload.name) {
-    const response = res.response({
-      status: 'fail',
-      message: 'Gagal menambahkan buku. Mohon isi nama buku'
-    })
-    response.code(500)
-    return response
-  }
-  if (req.payload.readPage > req.payload.pageCount) {
-    const response = res.response({
-      status: 'fail',
-      message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount'
-    })
-    response.code(500)
-    return response
-  }
+  const id = nanoid(16)
   const {
     name,
     year,
@@ -28,7 +13,6 @@ const addBook = (req, res) => {
     readPage,
     reading
   } = req.payload
-  const id = nanoid(16)
   const insertedAt = new Date().toISOString()
   const updatedAt = insertedAt
   const finished = (req.payload.readPage === req.payload.pageCount)
@@ -45,6 +29,22 @@ const addBook = (req, res) => {
     finished,
     insertedAt,
     updatedAt
+  }
+  if (!req.payload.name) {
+    const response = res.response({
+      status: 'fail',
+      message: 'Gagal menambahkan buku. Mohon isi nama buku'
+    })
+    response.code(400)
+    return response
+  }
+  if (req.payload.readPage > req.payload.pageCount) {
+    const response = res.response({
+      status: 'fail',
+      message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount'
+    })
+    response.code(400)
+    return response
   }
 
   books.push(newBook)
@@ -216,7 +216,7 @@ const editBookById = (req, res) => {
       status: 'fail',
       message: 'Gagal memperbarui buku. Mohon isi nama buku'
     })
-    response.code(500)
+    response.code(400)
     return response
   }
   if (req.payload.readPage > req.payload.pageCount) {
@@ -224,7 +224,7 @@ const editBookById = (req, res) => {
       status: 'fail',
       message: 'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount'
     })
-    response.code(500)
+    response.code(400)
     return response
   }
   const {
